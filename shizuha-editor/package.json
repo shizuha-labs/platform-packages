@@ -1,0 +1,75 @@
+{
+  "name": "@shizuha/editor",
+  "version": "1.2.0",
+  "description": "Shared TipTap-based rich text editor for Shizuha platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSES",
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_LICENSES.json"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc && vite build && node scripts/third-party-notices.mjs",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "@tiptap/core": "3.30.4",
+    "@tiptap/extension-highlight": "3.30.4",
+    "@tiptap/extension-image": "3.30.4",
+    "@tiptap/extension-link": "3.30.4",
+    "@tiptap/extension-placeholder": "3.30.4",
+    "@tiptap/extension-table": "3.30.4",
+    "@tiptap/extension-table-cell": "3.30.4",
+    "@tiptap/extension-table-header": "3.30.4",
+    "@tiptap/extension-table-row": "3.30.4",
+    "@tiptap/extension-task-item": "3.30.4",
+    "@tiptap/extension-task-list": "3.30.4",
+    "@tiptap/extension-underline": "3.30.4",
+    "@tiptap/pm": "3.30.4",
+    "@tiptap/react": "3.30.4",
+    "@tiptap/starter-kit": "3.30.4",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.303.0",
+    "tailwind-merge": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shizuha-labs/platform-packages.git",
+    "directory": "shizuha-editor"
+  },
+  "keywords": [
+    "react",
+    "tiptap",
+    "editor",
+    "rich-text",
+    "prosemirror",
+    "shizuha"
+  ],
+  "license": "MIT",
+  "overrides": {
+    "lodash": "^4.18.0",
+    "lodash-es": "^4.18.0"
+  }
+}

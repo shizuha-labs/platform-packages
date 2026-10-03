@@ -1,0 +1,15 @@
+{
+  "source_repository": "shizuha-labs/shizuha-stack",
+  "source_commit": "42762ebf4394f4400abbfe71c38bc0cb82885863",
+  "paths": [
+    "packages/shizuha-ui",
+    "packages/shizuha-editor",
+    "packages/shizuha-auth",
+    "packages/shizuha-storage"
+  ],
+  "changes": [
+    "MIT license added at root and in each package",
+    "shizuha-ui package-lock reconciled with package.json for a clean npm ci",
+    "npm repository metadata points to public platform-packages with exported directory paths"
+  ]
+}
