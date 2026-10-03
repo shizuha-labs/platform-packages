@@ -1,0 +1,26 @@
+[
+  {
+    "name": "clsx",
+    "version": "2.1.1",
+    "license": "MIT",
+    "files": [
+      "LICENSES/clsx-2.1.1/license"
+    ]
+  },
+  {
+    "name": "lucide-react",
+    "version": "0.303.0",
+    "license": "ISC",
+    "files": [
+      "LICENSES/lucide-react-0.303.0/LICENSE"
+    ]
+  },
+  {
+    "name": "tailwind-merge",
+    "version": "2.6.1",
+    "license": "MIT",
+    "files": [
+      "LICENSES/tailwind-merge-2.6.1/LICENSE.md"
+    ]
+  }
+]
