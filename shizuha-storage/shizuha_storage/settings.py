@@ -13,11 +13,12 @@ Usage in a service's settings.py:
     )
 """
 
+import os
 
 def get_minio_storage_settings(bucket_name, endpoint='http://minio:9000',
                                 access_key='minioadmin', secret_key='',
                                 querystring_auth=True, url_protocol='http:',
-                                custom_domain=None):
+                                custom_domain=None, public_endpoint=None):
     """
     Return Django STORAGES dict for S3Boto3Storage (MinIO-compatible).
 
@@ -29,11 +30,17 @@ def get_minio_storage_settings(bucket_name, endpoint='http://minio:9000',
         querystring_auth: Whether to use query string auth for URLs
         url_protocol: Protocol for generated URLs
         custom_domain: Optional custom domain for file URLs
+        public_endpoint: External origin for signed URLs, with internal object IO
+            unchanged. Defaults to AWS_S3_PUBLIC_ENDPOINT_URL when configured.
     """
+    public_endpoint = public_endpoint or os.environ.get('AWS_S3_PUBLIC_ENDPOINT_URL')
+    options = {'public_endpoint': public_endpoint} if public_endpoint else {}
     return {
         "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "BACKEND": ("shizuha_storage.backends.PublicEndpointS3Storage" if public_endpoint
+                        else "storages.backends.s3boto3.S3Boto3Storage"),
             "OPTIONS": {
+                **options,
                 "access_key": access_key,
                 "secret_key": secret_key,
                 "bucket_name": bucket_name,
