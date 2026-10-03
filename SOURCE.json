@@ -10,6 +10,7 @@
   "changes": [
     "MIT license added at root and in each package",
     "shizuha-ui package-lock reconciled with package.json for a clean npm ci",
-    "npm repository metadata points to public platform-packages with exported directory paths"
+    "npm repository metadata points to public platform-packages with exported directory paths",
+    "shizuha-editor 1.2.1 pins TipTap 3.31.4 and verifies prototype-safe attributes and bounded Markdown parsing"
   ]
 }
