@@ -1,0 +1,70 @@
+{
+  "name": "@shizuha/ui",
+  "version": "1.2.6",
+  "description": "Shared UI components for Shizuha platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./vite": {
+      "import": "./dist/vite.shared.mjs",
+      "default": "./dist/vite.shared.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSES",
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_LICENSES.json"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc && vite build && node scripts/copy-vite-shared.mjs && node scripts/third-party-notices.mjs",
+    "lint": "eslint src --ext ts,tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.474.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shizuha-labs/platform-packages.git",
+    "directory": "shizuha-ui"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "shizuha"
+  ],
+  "license": "MIT",
+  "overrides": {
+    "lodash": "^4.18.0",
+    "lodash-es": "^4.18.0"
+  }
+}
