@@ -53,11 +53,12 @@ class PublicEndpointTests(unittest.TestCase):
                 PublicEndpointS3Storage('https://files.example.org', **self.options(), **option)
 
     def test_factory_keeps_existing_backend_until_public_endpoint_is_explicit(self):
+        credentials = {'access_key': secrets.token_hex(10), 'secret_key': secrets.token_hex(20)}
         with patch.dict(os.environ, {}, clear=True):
-            ordinary = get_minio_storage_settings('attachments')
+            ordinary = get_minio_storage_settings('attachments', **credentials)
             self.assertEqual(ordinary['default']['BACKEND'], 'storages.backends.s3boto3.S3Boto3Storage')
         with patch.dict(os.environ, {'AWS_S3_PUBLIC_ENDPOINT_URL': 'https://files.example.org'}):
-            external = get_minio_storage_settings('attachments', endpoint='http://internal:8333')
+            external = get_minio_storage_settings('attachments', endpoint='http://internal:8333', **credentials)
         self.assertEqual(external['default']['BACKEND'], 'shizuha_storage.backends.PublicEndpointS3Storage')
         self.assertEqual(external['default']['OPTIONS']['endpoint_url'], 'http://internal:8333')
         self.assertEqual(external['default']['OPTIONS']['public_endpoint'], 'https://files.example.org')
