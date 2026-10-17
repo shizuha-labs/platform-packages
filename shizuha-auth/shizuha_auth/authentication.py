@@ -20,6 +20,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.contrib.auth import get_user_model
 
 from .user import FederatedUser, normalize_memberships
+from .revocation import enforce_token_active
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,13 @@ def enforce_rs256_token_binding(validated_token, service_name: str) -> None:
     if not service_name:
         return
     audiences = _audience_values(validated_token.get('aud'))
-    if service_name not in audiences:
+    first_party_human = (
+        '*' in audiences and not validated_token.get('client_id')
+        and not validated_token.get('is_service') and not validated_token.get('is_agent')
+        and str(validated_token.get('user_id', '')).isdecimal()
+        and int(validated_token['user_id']) > 0
+    )
+    if service_name not in audiences and not first_party_human:
         logger.warning(
             f"RS256 JWT rejected: aud={audiences!r} does not include required "
             f"service={service_name!r}"
@@ -104,7 +111,7 @@ def validate_rs256_jwks_token(raw_token, *, service_name: str = '',
     Validate an RS256 JWT via shizuha-id JWKS and return a dict-like token.
 
     Security properties: alg-pins RS256, requires kid, selects only RSA JWKS
-    keys by kid, refetches once for rotation, verifies exp/iss when configured,
+    keys by kid, refetches once for rotation, requires access-token expiry/issued-at and the exact configured issuer,
     and enforces per-service audience binding for RS256 tokens.
     """
     try:
@@ -117,6 +124,11 @@ def validate_rs256_jwks_token(raw_token, *, service_name: str = '',
     kid = header.get('kid')
     if not kid:
         raise InvalidToken('RS256 token missing kid')
+
+    if not service_name:
+        raise InvalidToken('RS256 consuming service is required')
+    if not expected_issuer:
+        raise InvalidToken('RS256 expected issuer is required')
 
     jwks_url = _jwks_url_from_context(expected_issuer)
     try:
@@ -131,15 +143,18 @@ def validate_rs256_jwks_token(raw_token, *, service_name: str = '',
     if key is None:
         raise InvalidToken(f'No RS256 JWKS key available for kid={kid!r}')
 
-    options = {'verify_aud': False, 'verify_exp': True}
+    options = {'verify_aud': False, 'verify_exp': True,
+               'require': ['exp', 'iat', 'iss', 'aud', 'token_type']}
     kwargs = {'key': key, 'algorithms': ['RS256'], 'options': options}
     if expected_issuer:
         kwargs['issuer'] = expected_issuer
     try:
         payload = jwt.decode(raw_token, **kwargs)
-    except jwt.PyJWTError as exc:
+    except (jwt.PyJWTError, TypeError, ValueError) as exc:
         raise InvalidToken(f'RS256 validation failed: {exc}')
 
+    if payload.get('token_type') != 'access':
+        raise InvalidToken('Not an access token')
     token = RS256Token(payload)
     enforce_rs256_token_binding(token, service_name)
     return token
@@ -353,6 +368,22 @@ def _try_local_user(user_id, claims):
         return _make_federated_user(claims)
 
 
+def _validate_access_token(raw_token, legacy_validator):
+    try:
+        header = jwt.get_unverified_header(raw_token)
+    except jwt.PyJWTError:
+        raise InvalidToken('Invalid token')
+    if header.get('alg') == 'RS256':
+        service_name, expected_issuer, _ = _service_context_from_settings()
+        token = validate_rs256_jwks_token(
+            raw_token, service_name=service_name, expected_issuer=expected_issuer,
+        )
+    else:
+        token = legacy_validator(raw_token)
+    enforce_token_active(raw_token)
+    return token
+
+
 class ShizuhaJWTAuthentication(JWTAuthentication):
     """
     Custom JWT authentication that works with Shizuha ID tokens.
@@ -367,16 +398,7 @@ class ShizuhaJWTAuthentication(JWTAuthentication):
 
     def get_validated_token(self, raw_token):
         """Accept legacy HS256 tokens, then RS256 tokens verified via JWKS."""
-        try:
-            return super().get_validated_token(raw_token)
-        except Exception:
-            service_name, expected_issuer, _ = _service_context_from_settings()
-            token = validate_rs256_jwks_token(
-                raw_token, service_name=service_name, expected_issuer=expected_issuer,
-            )
-            if token is not None:
-                return token
-            raise
+        return _validate_access_token(raw_token, super().get_validated_token)
 
     def get_user(self, validated_token):
         try:
@@ -424,14 +446,7 @@ class ShizuhaIDAuthentication(authentication.BaseAuthentication):
 
         try:
             service_name, expected_issuer, enforce = _service_context_from_settings()
-            try:
-                validated_token = AccessToken(token)
-            except TokenError:
-                validated_token = validate_rs256_jwks_token(
-                    token, service_name=service_name, expected_issuer=expected_issuer,
-                )
-                if validated_token is None:
-                    raise
+            validated_token = _validate_access_token(token, AccessToken)
 
             # Phase 2/4: advisory + enforcement
             advisory_claim_check(validated_token, service_name, expected_issuer)

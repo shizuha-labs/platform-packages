@@ -1,0 +1,6 @@
+node_modules/
+dist/
+# Generated from the current bundled module graph by npm run build.
+LICENSES/
+THIRD_PARTY_NOTICES.md
+THIRD_PARTY_LICENSES.json

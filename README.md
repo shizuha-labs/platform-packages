@@ -1,5 +1,7 @@
 # Shizuha platform packages
 
+Includes the UI, editor, chat, authentication and storage packages.
+
 Shared Python and frontend libraries used by the Shizuha platform.
 Each directory retains its package metadata and upstream source attribution.
 See SOURCE.json for the reviewed source snapshot and export transformations.

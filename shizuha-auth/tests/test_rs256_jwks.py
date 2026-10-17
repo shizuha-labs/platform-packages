@@ -62,6 +62,8 @@ def _keypair(kid="kid-1"):
 def _token(private_key, kid="kid-1", aud="pulse", iss="https://id.test"):
     payload = {
         "user_id": "13",
+        "iat": int(time.time()),
+        "token_type": "access",
         "email": "kai@example.test",
         "aud": aud,
         "iss": iss,
