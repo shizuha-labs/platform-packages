@@ -11,6 +11,22 @@
     "MIT license added at root and in each package",
     "shizuha-ui package-lock reconciled with package.json for a clean npm ci",
     "npm repository metadata points to public platform-packages with exported directory paths",
-    "shizuha-editor 1.2.1 pins TipTap 3.31.4 and verifies prototype-safe attributes and bounded Markdown parsing"
+    "shizuha-editor 1.2.1 pins TipTap 3.31.4 and verifies prototype-safe attributes and bounded Markdown parsing",
+    "npm lock transport URLs use canonical public registry, without internal cache DNS assumptions"
+  ],
+  "additional_sources": [
+    {
+      "source_repository": "shizuha-labs/shizuha-stack",
+      "source_commit": "d7339408561281e938ae9147388c7ffe101daa7d",
+      "paths": [
+        "packages/shizuha-chat"
+      ],
+      "changes": [
+        "MIT license copied from platform-packages; package already declares MIT",
+        "Repository metadata points to exported platform-packages directory",
+        "Chat lockfile reconciled for npm ci; nullable message IDs and generic state transitions retain their actual TypeScript contracts",
+        "Build preserves original licenses/notices for actual bundled dependency graph in npm tarball"
+      ]
+    }
   ]
 }

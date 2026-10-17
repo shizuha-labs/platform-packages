@@ -1,0 +1,61 @@
+{
+  "name": "@shizuha/chat",
+  "version": "1.0.0",
+  "description": "AI-powered chatbot widget for Shizuha platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSES",
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_LICENSES.json"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc && vite build && node scripts/third-party-notices.mjs",
+    "lint": "eslint src --ext ts,tsx",
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/a11y_names.test.mjs && node --experimental-strip-types tests/merge_fetched_messages.test.mjs && node --experimental-strip-types tests/socket_send.test.mjs && node --experimental-strip-types tests/unread_jump.test.mjs && node --experimental-strip-types tests/ack_timeout.test.mjs && node --experimental-strip-types tests/peer_ids.test.mjs"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shizuha-labs/platform-packages.git",
+    "directory": "shizuha-chat"
+  },
+  "keywords": [
+    "react",
+    "chat",
+    "chatbot",
+    "ai",
+    "shizuha"
+  ],
+  "license": "MIT",
+  "overrides": {
+    "lodash": "^4.18.0",
+    "lodash-es": "^4.18.0"
+  }
+}
